@@ -139,8 +139,8 @@ class MemoryRLM:
 
     def __init__(
         self,
-        model: str = "gpt-4o",
-        sub_model: str = "gpt-4o-mini",
+        model: str = os.getenv("CLAWMORY_MODEL", "qwen3.5:4b"),
+        sub_model: str = os.getenv("CLAWMORY_MODEL", "qwen3.5:4b"),
         max_iterations: int = 10,
         api_key: Optional[str] = None,
         verbose: bool = False,

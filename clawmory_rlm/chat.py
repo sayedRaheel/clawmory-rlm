@@ -9,8 +9,8 @@ from .memory_rlm import MemoryRLM
 class MemoryChat:
     def __init__(
         self,
-        model: str = "gpt-4o",
-        sub_model: str = "gpt-4o-mini",
+        model: str = os.getenv("CLAWMORY_MODEL", "qwen3.5:4b"),
+        sub_model: str = os.getenv("CLAWMORY_MODEL", "qwen3.5:4b"),
         threshold_chars: int = 50000,
         api_key: Optional[str] = None
     ):
