@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+DIR="/Users/zubair/.openclaw/workspace/clawmory-rlm"
+VENV="/Users/zubair/.openclaw/workspace/rlm-proxy/venv"
+source "$VENV/bin/activate"
+export PYTHONPATH="$DIR"
+
+if [ -f "$DIR/.env" ]; then
+    export $(cat "$DIR/.env" | grep -v '#' | awk '/=/ {print $1}')
+fi
+
+COMMAND=$1
+shift
+
+if [ "$COMMAND" = "log" ]; then
+    python "$DIR/bin/rlm_log.py" "$@"
+elif [ "$COMMAND" = "query" ]; then
+    python "$DIR/bin/rlm_query.py" "$@"
+else
+    echo "Usage: rlm [log|query] [args...]"
+fi
