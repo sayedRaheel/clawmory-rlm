@@ -1,3 +1,5 @@
+![Clawmory RLM](./docs/clawmory-banner.png)
+
 # Clawmory RLM 🧠
 
 **Scalable Conversational Memory via Recursive Sub-Agent Delegation.**
