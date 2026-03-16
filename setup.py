@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="clawmory_rlm",
-    version="0.1.0",
+    version="0.3.0",
     description="Scalable Conversational Memory via Recursive Sub-Agent Delegation",
     author="Sayed Raheel Hussain",
     packages=find_packages(),
@@ -11,4 +11,9 @@ setup(
         "python-dotenv",
         "tenacity"
     ],
+    entry_points={
+        "console_scripts": [
+            "rlm=clawmory_rlm.cli:main",
+        ]
+    },
 )

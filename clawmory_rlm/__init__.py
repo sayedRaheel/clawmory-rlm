@@ -1,26 +1,20 @@
-"""
-rlm_memory — RLM-powered long-context conversation memory.
+"""Clawmory RLM public package surface."""
 
-Drop-in replacement for standard LLM chat that handles arbitrarily
-long conversation histories using the Recursive Language Model paradigm.
-
-No vector database. No summarization. No truncation.
-
-Quick start:
-    from rlm_memory import MemoryChat
-
-    chat = MemoryChat(model="gpt-4o")
-    chat.send("My project budget is $500K")
-    answer = chat.send("What was my project budget?")
-"""
-
+from .agent_session import AgentSession, AgentSessionState
 from .chat import MemoryChat
+from .memory_router import MemoryResponse, MemoryRouter
 from .memory_store import MemoryStore, Turn
 from .memory_rlm import MemoryRLM
 from .query_classifier import classify_query, DATASET_TYPE_MAP, QUERY_TYPES
+from .session_memory import SessionBootstrap, SessionMemoryManager
+from .structured_memory import StructuredMemoryBuilder, StructuredMemoryStore
 
 __all__ = [
+    "AgentSession", "AgentSessionState",
     "MemoryChat", "MemoryStore", "Turn", "MemoryRLM",
+    "MemoryRouter", "MemoryResponse",
+    "StructuredMemoryStore", "StructuredMemoryBuilder",
+    "SessionBootstrap", "SessionMemoryManager",
     "classify_query", "DATASET_TYPE_MAP", "QUERY_TYPES",
 ]
-__version__ = "0.2.0"
+__version__ = "0.3.0"

@@ -1,0 +1,110 @@
+{
+  "cases": [
+    {
+      "name": "latest_truth_backend",
+      "namespace": "backend",
+      "goal": "Resume backend work",
+      "sessions": [
+        {
+          "label": "s1",
+          "turns": [
+            ["user", "We first considered Go for the backend."],
+            ["assistant", "Noted."]
+          ]
+        },
+        {
+          "label": "s2",
+          "turns": [
+            ["user", "We then moved toward Python."],
+            ["assistant", "Noted."]
+          ]
+        },
+        {
+          "label": "s3",
+          "turns": [
+            ["user", "Final decision: Python with FastAPI."],
+            ["assistant", "Next step: connect the runner."]
+          ]
+        }
+      ],
+      "expected_substrings": [
+        "Python with FastAPI",
+        "connect the runner"
+      ],
+      "forbidden_substrings": [
+        "Final decision: use Go."
+      ]
+    },
+    {
+      "name": "open_loop_carryover",
+      "namespace": "memory",
+      "goal": "Resume memory work",
+      "sessions": [
+        {
+          "label": "s1",
+          "turns": [
+            ["user", "Final decision: keep structured memory plus safe deep recall."],
+            ["assistant", "Next step: add chronology benchmarks."]
+          ]
+        },
+        {
+          "label": "s2",
+          "turns": [
+            ["user", "We also decided to keep namespace isolation."],
+            ["assistant", "Open loop: add provider integration benchmarks."]
+          ]
+        }
+      ],
+      "expected_substrings": [
+        "structured memory plus safe deep recall",
+        "chronology benchmarks",
+        "provider integration benchmarks"
+      ],
+      "forbidden_substrings": []
+    },
+    {
+      "name": "namespace_isolation_alpha",
+      "namespace": "alpha",
+      "goal": "Resume alpha",
+      "sessions": [
+        {
+          "label": "a1",
+          "turns": [
+            ["user", "Final decision: use FastAPI for alpha."],
+            ["assistant", "Next step: alpha task."]
+          ]
+        }
+      ],
+      "expected_substrings": [
+        "FastAPI for alpha",
+        "alpha task"
+      ],
+      "forbidden_substrings": [
+        "Django for beta",
+        "beta task"
+      ]
+    },
+    {
+      "name": "namespace_isolation_beta",
+      "namespace": "beta",
+      "goal": "Resume beta",
+      "sessions": [
+        {
+          "label": "b1",
+          "turns": [
+            ["user", "Final decision: use Django for beta."],
+            ["assistant", "Next step: beta task."]
+          ]
+        }
+      ],
+      "expected_substrings": [
+        "Django for beta",
+        "beta task"
+      ],
+      "forbidden_substrings": [
+        "FastAPI for alpha",
+        "alpha task"
+      ]
+    }
+  ]
+}

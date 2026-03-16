@@ -17,6 +17,7 @@ import threading
 import concurrent.futures
 from typing import Optional, Dict, Any, List
 
+from .config import DEFAULT_RLM_TIMEOUT_S
 
 def _retry_openai_call(fn, max_retries: int = 6, base_delay: float = 5.0):
     """
@@ -145,12 +146,14 @@ class MemoryRLM:
         api_key: Optional[str] = None,
         verbose: bool = False,
         max_workers: int = 20,
+        timeout_s: int = DEFAULT_RLM_TIMEOUT_S,
     ):
         self.model = model
         self.sub_model = sub_model
         self.max_iterations = max_iterations
         self.verbose = verbose
         self.max_workers = max_workers
+        self.timeout_s = timeout_s
         self._api_key = api_key or os.environ.get("OPENAI_API_KEY")
         self.llm = OpenAIClient(api_key=api_key, model=model)
         self._last_stats: Dict[str, Any] = {}
@@ -181,10 +184,8 @@ class MemoryRLM:
         self.llm.reset_usage()
 
         # --- Classify query type (one cheap call if not provided) ---
-        import openai as _openai_mod
-        _client = _openai_mod.OpenAI(api_key=self._api_key)
         if query_type is None:
-            query_type = classify_query(query, _client, self.model)
+            query_type = self._classify_query(query)
         if self.verbose:
             print(f"  [MemoryRLM] query_type={query_type}")
 
@@ -359,6 +360,10 @@ class MemoryRLM:
 
         for iteration in range(self.max_iterations):
             iterations_used = iteration + 1
+            if time.time() - t0 > self.timeout_s:
+                raise TimeoutError(
+                    f"MemoryRLM timed out after {self.timeout_s}s while answering: {query}"
+                )
 
             # Build action prompt for this iteration
             action = MEMORY_ACTION_PROMPT.format(
@@ -427,6 +432,10 @@ class MemoryRLM:
         if not answer:
             if self.verbose:
                 print("  [MemoryRLM] Max iterations reached — forcing final answer")
+            if time.time() - t0 > self.timeout_s:
+                raise TimeoutError(
+                    f"MemoryRLM timed out after {self.timeout_s}s while forcing final answer: {query}"
+                )
             messages.append({
                 "role": "user",
                 "content": MEMORY_FINAL_PROMPT.format(query=query),
@@ -457,3 +466,22 @@ class MemoryRLM:
     def stats(self) -> Dict[str, Any]:
         """Return stats from the last completion() call."""
         return self._last_stats
+
+    def _classify_query(self, query: str) -> str:
+        provider = os.getenv("CLAWMORY_PROVIDER", "openai").lower()
+        if provider == "openai":
+            import openai as _openai_mod
+
+            client = _openai_mod.OpenAI(api_key=self._api_key)
+            return classify_query(query, client, self.model)
+
+        query_l = query.lower()
+        if any(word in query_l for word in ("latest", "final", "changed", "updated")):
+            return "KNOWLEDGE_UPDATE"
+        if any(word in query_l for word in ("when", "before", "after", "timeline", "days")):
+            return "TEMPORAL"
+        if any(word in query_l for word in ("all", "list", "count", "how many")):
+            return "AGGREGATION"
+        if any(word in query_l for word in ("prefer", "preference", "recommend")):
+            return "PREFERENCE"
+        return "FACTUAL"

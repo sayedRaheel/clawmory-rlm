@@ -1,0 +1,7 @@
+interface:
+  display_name: "Clawmory RLM"
+  short_description: "Cross-session memory for agents"
+  default_prompt: "Use $clawmory-rlm to resume prior work, persist important turns, and carry forward decisions or open loops across sessions."
+
+policy:
+  allow_implicit_invocation: true
