@@ -34,7 +34,7 @@ Create a `.env` file in the root directory. We strongly recommend local Ollama f
 CLAWMORY_PROVIDER=ollama
 OPENAI_API_BASE=http://localhost:11434/v1
 OPENAI_API_KEY=ollama
-CLAWMORY_MODEL=gpt-oss:20b
+CLAWMORY_MODEL=qwen3.5:4b
 CLAWMORY_RLM_TIMEOUT_S=20
 ```
 
